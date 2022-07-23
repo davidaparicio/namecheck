@@ -1,0 +1,40 @@
+name: GoReleaser
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  goreleaser:
+    # Fix homebrew tap formula: failed to publish artifacts 403 Resource not accessible by integration
+    permissions:
+      contents: write
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.18]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Set up Syft
+        #run: sudo apt-get install -y syft
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+        env:
+          # https://goreleaser.com/errors/resource-not-accessible-by-integration/
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}

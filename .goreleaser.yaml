@@ -9,6 +9,7 @@ builds:
       - linux
       - windows
       - darwin
+    main: ./cmd/cli/
 archives:
   - replacements:
       darwin: Darwin
@@ -16,6 +17,7 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+    #name_template: "{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
