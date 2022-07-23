@@ -17,8 +17,6 @@
 A simple CLI and server to check a name availibity on Twitter and GitHub.
 
 ## Remarks
-The project is improved with security checks, following examples inside the [Programmez! - Hors-Série 8: 100 % SÉCURITÉ / HACKING / OWASP / DEVSECOPS](https://www.programmez.com/page-devcon/devcon-5-securite-et-hacking)
-
 The Twitter checker is using a GCP Cloud Function, adding a network latency simulation, configurable through a parameter.
 
 ## Original project

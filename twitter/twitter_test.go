@@ -3,7 +3,7 @@ package twitter_test
 import (
 	"testing"
 
-	"github.com/davidaparicio/namecheck/"
+	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/twitter"
 )
 

@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/davidaparicio/namecheck/"
+	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
 	"github.com/davidaparicio/namecheck/twitter"
 )

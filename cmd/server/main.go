@@ -7,13 +7,13 @@ import (
 	"log"
 	"net/http"
 
-	//Be carefull!!! http://mmcloughlin.com/posts/your-pprof-is-showing
+	//Be careful!!! http://mmcloughlin.com/posts/your-pprof-is-showing
 	//_ "net/http/pprof"
 
 	"sync"
 	"sync/atomic"
 
-	"github.com/davidaparicio/namecheck/"
+	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
 	"github.com/davidaparicio/namecheck/twitter"
 	"github.com/gorilla/mux"

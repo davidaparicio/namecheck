@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/davidaparicio/namecheck/"
+	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
 	"github.com/davidaparicio/namecheck/stub"
 )
