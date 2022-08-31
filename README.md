@@ -14,7 +14,7 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
 
 ## Overview
-A simple CLI and server to check a name availibity on Twitter and GitHub.
+A simple CLI and server to check a name availability on Twitter and GitHub.
 
 ## Remarks
 The Twitter checker is using a GCP Cloud Function, adding a network latency simulation, configurable through a parameter.
