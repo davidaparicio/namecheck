@@ -17,7 +17,11 @@
 A simple CLI and server to check a name availability on Twitter and GitHub.
 
 ## Remarks
-The Twitter checker is using a GCP Cloud Function, adding a network latency simulation, configurable through a parameter.
+Twitter checker is using a GCP Cloud Function, adding a network latency simulation, configurable through a parameter.
+
+Server handles timeouts as recommended [Filippo Valsorda](https://github.com/FiloSottile) on the Cloudflare blog ([post 1 ](https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/)/[ post 2](https://blog.cloudflare.com/exposing-go-on-the-internet/)) and [Ilija Eftimov](https://ieftimov.com/posts/make-resilient-golang-net-http-servers-using-timeouts-deadlines-context-cancellation/).
+
+[ADR](https://github.blog/2020-08-13-why-write-adrs/) (Architecture decision record) about the usage of `gorilla/mux` can be found [here](https://www.alexedwards.net/blog/which-go-router-should-i-use).
 
 ## Original project
-Fork of the opensource project by [@jub0bs](https://github.com/jub0bs/), available on GitHub at [https://github.com/jub0bs/namecheck](https://github.com/jub0bs/namecheck)
+Fork of the opensource project by [@jub0bs](https://github.com/jub0bs/), available on GitHub at [https://github.com/jub0bs/namecheck](https://github.com/jub0bs/namecheck).
