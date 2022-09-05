@@ -23,5 +23,11 @@ Server handles timeouts as recommended [Filippo Valsorda](https://github.com/Fil
 
 [ADR](https://github.blog/2020-08-13-why-write-adrs/) (Architecture decision record) about the usage of `gorilla/mux` can be found [here](https://www.alexedwards.net/blog/which-go-router-should-i-use).
 
+## Contribute
+
+Works on my machine - and yours ! Spin up pre-configured, standardized dev environments of this repository, by clicking on the button below.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#/https://github.com/davidaparicio/namecheck)
+
 ## Original project
 Fork of the opensource project by [@jub0bs](https://github.com/jub0bs/), available on GitHub at [https://github.com/jub0bs/namecheck](https://github.com/jub0bs/namecheck).
