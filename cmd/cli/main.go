@@ -15,7 +15,7 @@ import (
 	"github.com/davidaparicio/namecheck/twitter"
 )
 
-type Status int
+//type Status int
 
 type Result struct {
 	Username  string
@@ -24,12 +24,12 @@ type Result struct {
 	Available bool
 }
 
-const (
+/*const (
 	Unknown Status = iota
 	Active
 	Suspended
 	Available
-)
+)*/
 
 func main() {
 	if len(os.Args[1:]) == 0 {

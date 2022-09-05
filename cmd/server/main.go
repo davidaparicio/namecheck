@@ -20,7 +20,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Status int
+//type Status int
 
 type Result struct {
 	Username  string
@@ -30,12 +30,12 @@ type Result struct {
 	Error     error
 }
 
-const (
+/*const (
 	Unknown Status = iota
 	Active
 	Suspended
 	Available
-)
+)*/
 
 var (
 	visits uint64

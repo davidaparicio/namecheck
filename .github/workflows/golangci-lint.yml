@@ -1,4 +1,4 @@
-name: golangci-lint
+name: Linter (golangci-lint)
 on:
   push:
     tags:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         go: [1.17]
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest] #[macos-latest, windows-latest]
     name: lint
     runs-on: ${{ matrix.os }}
     steps:
