@@ -1,4 +1,4 @@
-name: "Security Scan (gosec)"
+name: "Security Scan"
 
 # Run workflow each time code is pushed to your repository and on a schedule.
 # The scheduled workflow runs every at 10:13 on Thursday UTC time.
@@ -12,9 +12,39 @@ on:
     - cron: '13 10 * * 4'
 
 jobs:
-  analyze:
+  codeql:
+    name: Analyze CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'go' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      
+  gosec:
     name: Analyze gosec
     runs-on: ubuntu-latest
+    needs: [codeql] # sequential
     permissions:
       actions: read
       contents: read
