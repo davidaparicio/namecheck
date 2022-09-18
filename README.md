@@ -11,7 +11,8 @@
 [![froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=yellowgreen&message=mirrored&style=flat-square)](https://lab.frogg.it/davidaparicio/namecheck)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/namecheck/blob/main/LICENSE.md)
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
-[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)][![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_shield)
+()
 
 ## Overview
 A simple CLI and server to check a name availability on Twitter and GitHub.
@@ -31,3 +32,6 @@ Works on my machine - and yours ! Spin up pre-configured, standardized dev envir
 
 ## Original project
 Fork of the opensource project by [@jub0bs](https://github.com/jub0bs/), available on GitHub at [https://github.com/jub0bs/namecheck](https://github.com/jub0bs/namecheck).
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_large)
