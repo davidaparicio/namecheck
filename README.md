@@ -8,11 +8,11 @@
 [![Go Report Card](https://goreportcard.com/badge/davidaparicio/namecheck)](https://goreportcard.com/report/davidaparicio/namecheck)
 [![Github](https://img.shields.io/static/v1?label=github&logo=github&color=E24329&message=main&style=flat-square)](https://github.com/davidaparicio/namecheck)
 [![GitLab](https://img.shields.io/static/v1?label=gitlab&logo=gitlab&color=green&message=mirrored&style=flat-square)](https://gitlab.com/davidaparicio/namecheck)
-[![froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=yellowgreen&message=mirrored&style=flat-square)](https://lab.frogg.it/davidaparicio/namecheck)
+[![Froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=red&message=no&style=flat-square)](https://lab.frogg.it/davidaparicio/namecheck)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/namecheck/blob/main/LICENSE.md)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_shield)
+[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
-[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)][![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_shield)
-()
 
 ## Overview
 A simple CLI and server to check a name availability on Twitter and GitHub.
@@ -34,4 +34,10 @@ Works on my machine - and yours ! Spin up pre-configured, standardized dev envir
 Fork of the opensource project by [@jub0bs](https://github.com/jub0bs/), available on GitHub at [https://github.com/jub0bs/namecheck](https://github.com/jub0bs/namecheck).
 
 ## License
+Licensed under the MIT License, Version 2.0 (the "License"). You may not use this file except in compliance with the License.
+You may obtain a copy of the License [here](https://choosealicense.com/licenses/mit/).
+
+If needed some help,  there are a ["Licenses 101" by FOSSA](https://fossa.com/blog/open-source-licenses-101-mit-license/), a [Snyk explanation](https://snyk.io/learn/what-is-mit-license/)
+of MIT license and a [French conference talk](https://www.youtube.com/watch?v=8WwTe0vLhgc) by [Jean-Michael Legait](https://twitter.com/jmlegait) about licenses.
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_large)
