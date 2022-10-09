@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	//Be careful!!! http://mmcloughlin.com/posts/your-pprof-is-showing
 	//_ "net/http/pprof"
@@ -50,6 +49,11 @@ func main() {
 	r.HandleFunc("/details", handleDetails)
 	http.Handle("/", r)
 
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal(err)
+	}
+
+	/* 🔒 sec: G114 add srv timeouts
 	srv := &http.Server{
 		Addr:              ":8080",
 		ReadTimeout:       1 * time.Second,
@@ -62,7 +66,7 @@ func main() {
 
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
-	}
+	}*/
 }
 
 func handleDetails(w http.ResponseWriter, r *http.Request) {
