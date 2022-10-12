@@ -60,8 +60,8 @@ dockers:
   - "--label=org.opencontainers.image.revision={{.FullCommit}}"
   - "--label=org.opencontainers.image.version={{.Version}}"
   - "--label=org.opencontainers.image.source={{.GitURL}}"
-  extra_files:
-  - ca-certificates.crt
+  #extra_files:
+  #- ca-certificates.crt
 
 # signs our docker image
 # https://goreleaser.com/customization/docker_sign
