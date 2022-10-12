@@ -65,15 +65,15 @@ dockers:
 
 # signs our docker image
 # https://goreleaser.com/customization/docker_sign
-#docker_signs:
-#  - cmd: cosign
-#    env:
-#    - COSIGN_EXPERIMENTAL=1
-#    artifacts: images
-#    output: true
-#    args:
-#    - 'sign'
-#    - '${artifact}'
+docker_signs:
+  - cmd: cosign
+    env:
+    - COSIGN_EXPERIMENTAL=1
+    artifacts: images
+    output: true
+    args:
+    - 'sign'
+    - '${artifact}'
 
 brews:
 - name: namecheck

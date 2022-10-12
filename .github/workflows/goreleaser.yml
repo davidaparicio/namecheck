@@ -10,7 +10,12 @@ jobs:
     # Fix homebrew tap formula: failed to publish artifacts 403 Resource not accessible by integration
     permissions:
       contents: write
+      packages: write
+      deployments: write
+      id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
+    # GitHub-Action with correct permissions (id-token) calls a workflow via nektos/act and sets the GITHUB_TOKEN as secret.
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+    # https://github.com/kedacore/keda/pull/2504/files
 
     runs-on: ubuntu-latest
     strategy:
