@@ -17,6 +17,25 @@
 ## Overview
 A simple CLI and server to check a name availability on Twitter and GitHub.
 
+## How to use it
+
+If you have already ```Docker``` installed on your laptop
+
+```docker run davidaparicio/namecheck:<TAG/VERSION_LIKE_v0.0.5> <PSEUDO_TO_CHECK>```
+
+If not, you need ```Go``` and all dependencies
+
+```go run cmd/cli/main.go <PSEUDO_TO_CHECK>```
+
+or the server with 
+
+```go run cmd/server/main.go```
+
+and check with a curl command ```curl http://localhost:8080/check?username=<PSEUDO_TO_CHECK>```
+
+For more information, you can see [examples here](EXAMPLES.md)
+
+
 ## Remarks
 Twitter checker is using a GCP Cloud Function, adding a network latency simulation, configurable through a parameter.
 
