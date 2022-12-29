@@ -60,6 +60,7 @@ func main() {
 		//TLSConfig:       tlsConfig,
 	}
 
+	log.Println("Server running on port 8080")
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
