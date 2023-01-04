@@ -14,6 +14,10 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
 
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
+
+
 ## Overview
 A simple CLI and server to check a name availability on Twitter and GitHub.
 
