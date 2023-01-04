@@ -1,0 +1,70 @@
+openapi: 3.0.2
+info:
+  title: Namecheck Sample API
+  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.0.5
+servers:
+  - url: http://localhost:8080
+    description: Local mode
+#  - url: http://api.example.com/v1
+#    description: Optional server description, e.g. Main (production) server
+#  - url: http://staging-api.example.com
+#    description: Optional server description, e.g. Internal staging server for testing
+components:
+  schemas:
+    username:
+      type: string
+      minLength: 0
+      maxLength: 36
+      pattern: ".*"
+
+paths:
+  /check: #check?username=dadideo
+    get:
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+        - in: query
+          name: username
+          schema:
+            $ref: "#/components/schemas/username"
+          required: true
+          description: Username of the user to get
+      responses:
+        '200':    # status code
+          description: A JSON array of results
+          content:
+            application/json:
+              schema: 
+                type: object
+                required:
+                  - "username"
+                  - "results"
+                properties:
+                  username:
+                    $ref: "#/components/schemas/username"
+                  results:
+                    type: array
+                    items: 
+                      type: object
+                      required:
+                        - "platform"
+                        - "valid"
+                        - "available"
+                      properties:
+                        platform:
+                          type: string
+                          enum: 
+                            - GitHub
+                            - Twitter
+                        valid:
+                          type: string
+                          enum: 
+                            - true
+                            - false
+                        available:
+                          type: string
+                          enum: 
+                            - true
+                            - false
+                          
