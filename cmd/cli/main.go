@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -13,6 +12,7 @@ import (
 	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
 	"github.com/davidaparicio/namecheck/twitter"
+	"golang.org/x/exp/slog"
 )
 
 //type Status int
@@ -32,8 +32,12 @@ type Result struct {
 )*/
 
 func main() {
+	textHandler := slog.NewTextHandler(os.Stdout)
+	log := slog.New(textHandler)
+
 	if len(os.Args[1:]) == 0 {
-		log.Fatal("username args is required")
+		log.Error("username args is required", errors.New("username missing"))
+		os.Exit(2)
 	}
 	username := os.Args[1]
 

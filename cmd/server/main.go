@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+	"os"
 	"time"
 
 	//Be careful!!! http://mmcloughlin.com/posts/your-pprof-is-showing
@@ -18,6 +18,7 @@ import (
 	"github.com/davidaparicio/namecheck/github"
 	"github.com/davidaparicio/namecheck/twitter"
 	"github.com/gorilla/mux"
+	"golang.org/x/exp/slog"
 )
 
 //type Status int
@@ -44,6 +45,9 @@ var (
 )
 
 func main() {
+	textHandler := slog.NewTextHandler(os.Stdout)
+	log := slog.New(textHandler)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/check", handleCheck)
 	r.HandleFunc("/visits", handleVisits)
@@ -60,9 +64,10 @@ func main() {
 		//TLSConfig:       tlsConfig,
 	}
 
-	log.Println("Server running on port 8080")
+	log.Info("Server running on port 8080")
 	if err := srv.ListenAndServe(); err != nil {
-		log.Fatal(err)
+		log.Error("Failure during the start of the server", err)
+		os.Exit(2)
 	}
 }
 
