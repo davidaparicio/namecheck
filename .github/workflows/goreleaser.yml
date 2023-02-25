@@ -25,7 +25,7 @@ jobs:
     #https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-not-requiring-successful-dependent-jobs
     # if: ${{ always() }}
     #https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow#defining-prerequisite-jobs
-    needs: [test] # sequential
+    #needs: [test] # sequential
 
     steps:
       - name: Checkout
