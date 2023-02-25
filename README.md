@@ -11,7 +11,7 @@
 [![Froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=red&message=no&style=flat-square)](https://lab.frogg.it/davidaparicio/namecheck)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/namecheck/blob/main/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_shield)
-[![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
 
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)

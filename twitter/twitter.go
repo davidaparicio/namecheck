@@ -57,7 +57,13 @@ func (tw *Twitter) IsAvailable(ctx context.Context, username string) (bool, erro
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			fmt.Printf("Error closing file: %s\n", err)
+		}
+	}()
+
 	if resp.StatusCode != http.StatusOK {
 		return false, errors.New("unexpected response from API")
 	}

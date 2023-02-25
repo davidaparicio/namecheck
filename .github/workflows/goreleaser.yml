@@ -5,18 +5,19 @@ on:
     tags:
       - '*'
 
+# Fix homebrew tap formula: failed to publish artifacts 403 Resource not accessible by integration
+permissions:
+  contents: write
+  packages: write
+  deployments: write
+  id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
+# GitHub-Action with correct permissions (id-token) calls a workflow via nektos/act and sets the GITHUB_TOKEN as secret.
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+# https://github.com/kedacore/keda/pull/2504/files
+
 jobs:
   goreleaser:
-    # Fix homebrew tap formula: failed to publish artifacts 403 Resource not accessible by integration
-    permissions:
-      contents: write
-      packages: write
-      deployments: write
-      id-token: write # needed for signing the images with GitHub OIDC Token **not production ready**
-    # GitHub-Action with correct permissions (id-token) calls a workflow via nektos/act and sets the GITHUB_TOKEN as secret.
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
-    # https://github.com/kedacore/keda/pull/2504/files
-
+    name: Prepare the binary
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,7 +26,7 @@ jobs:
     #https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-not-requiring-successful-dependent-jobs
     # if: ${{ always() }}
     #https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow#defining-prerequisite-jobs
-    needs: [test] # sequential
+    #needs: [test] # sequential
 
     steps:
       - name: Checkout
