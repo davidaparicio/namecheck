@@ -8,6 +8,10 @@ go test -v ./... -coverprofile=coverage.out
 echo "Let's Fuzz"
 go test -fuzz ${FuzzFUNC} -fuzztime 15s
 
+echo "Let's Mutate"
+# go get -t -v github.com/avito-tech/go-mutesting/...
+go-mutesting github.com/avito-tech/go-mutesting/...
+
 echo "Let's Bench"
 go test -v -run=^$ -bench . -benchmem -benchtime=3s ./
 
