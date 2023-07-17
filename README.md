@@ -4,18 +4,20 @@
 <img src="assets/img/name.logo.png" alt="Namecheck logo" title="Namecheck logo" />
 </p>
 
-[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://pkg.go.dev/github.com/davidaparicio/namecheck)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://pkg.go.dev/github.com/davidaparicio/namecheck)
 [![Go Report Card](https://goreportcard.com/badge/davidaparicio/namecheck)](https://goreportcard.com/report/davidaparicio/namecheck)
+[![codecov](https://codecov.io/gh/davidaparicio/namecheck/branch/main/graph/badge.svg?token=VYP4LAODQ6)](https://codecov.io/gh/davidaparicio/namecheck)
+[![build](https://github.com/davidaparicio/namecheck/actions/workflows/goreleaser.yml/badge.svg)](https://github.com/davidaparicio/namecheck/actions/workflows/goreleaser.yml)
 [![Github](https://img.shields.io/static/v1?label=github&logo=github&color=E24329&message=main&style=flat-square)](https://github.com/davidaparicio/namecheck)
 [![GitLab](https://img.shields.io/static/v1?label=gitlab&logo=gitlab&color=green&message=mirrored&style=flat-square)](https://gitlab.com/davidaparicio/namecheck)
 [![Froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=red&message=no&style=flat-square)](https://lab.frogg.it/davidaparicio/namecheck)
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/namecheck/blob/main/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_shield)
 [![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
-
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
 
 
 ## Overview
@@ -52,6 +54,10 @@ Server handles timeouts as recommended [Filippo Valsorda](https://github.com/Fil
 Works on my machine - and yours ! Spin up pre-configured, standardized dev environments of this repository, by clicking on the button below.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#/https://github.com/davidaparicio/namecheck)
+
+## Code coverage
+
+![coverage](https://codecov.io/gh/davidaparicio/namecheck/branch/main/graphs/sunburst.svg?token=VYP4LAODQ6)
 
 ## Original project
 Fork of the opensource project by [@jub0bs](https://github.com/jub0bs/), available on GitHub at [https://github.com/jub0bs/namecheck](https://github.com/jub0bs/namecheck).
