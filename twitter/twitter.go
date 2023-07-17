@@ -2,21 +2,7 @@
 // is available on Twitter.
 package twitter
 
-import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"net/http"
-	"net/url"
-	"regexp"
-	"strings"
-	"unicode/utf8"
-
-	"github.com/davidaparicio/namecheck"
-	"github.com/davidaparicio/namecheck/internal"
-)
-
+/*
 type Twitter struct {
 	Client namecheck.Client
 }
@@ -65,7 +51,7 @@ func (tw *Twitter) IsAvailable(ctx context.Context, username string) (bool, erro
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return false, errors.New("unexpected response from API")
+		return false, errors.New("unexpected response from API") //request to Twitter failed
 	}
 	var dto struct {
 		Data interface{} `json:"data"`
@@ -92,4 +78,4 @@ func containsNoIllegalPattern2(username string) bool {
 
 func containsOnlyLegalChars(username string) bool {
 	return legalPattern.MatchString(username)
-}
+}*/

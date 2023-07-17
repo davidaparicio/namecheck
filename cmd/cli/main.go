@@ -12,7 +12,6 @@ import (
 
 	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
-	"github.com/davidaparicio/namecheck/twitter"
 )
 
 //type Status int
@@ -39,13 +38,13 @@ func main() {
 
 	var checkers []namecheck.Checker
 	for i := 0; i < 3; i++ {
-		t := &twitter.Twitter{
+		/*t := &twitter.Twitter{
 			Client: http.DefaultClient,
-		}
+		}*/
 		g := &github.GitHub{
 			Client: http.DefaultClient,
 		}
-		checkers = append(checkers, t, g)
+		checkers = append(checkers, g)
 	}
 	results := make(chan Result, len(checkers))
 	errc := make(chan error, len(checkers))

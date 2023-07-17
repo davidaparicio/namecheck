@@ -1,13 +1,6 @@
 package twitter_test
 
-import (
-	"testing"
-
-	"github.com/davidaparicio/namecheck"
-	"github.com/davidaparicio/namecheck/twitter"
-)
-
-var _ namecheck.Checker = (*twitter.Twitter)(nil)
+/*var _ namecheck.Checker = (*twitter.Twitter)(nil)
 
 func TestUsernameTooLong(t *testing.T) {
 	tw := twitter.Twitter{}
@@ -83,3 +76,4 @@ func TestUsernameValid(t *testing.T) {
 		)
 	}
 }
+*/

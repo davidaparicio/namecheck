@@ -16,7 +16,6 @@ import (
 
 	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
-	"github.com/davidaparicio/namecheck/twitter"
 	"github.com/gorilla/mux"
 )
 
@@ -107,13 +106,13 @@ func handleCheck(w http.ResponseWriter, r *http.Request) {
 		//Clients and Transports are safe for concurrent use by multiple
 		//goroutines and for efficiency should only be created once and re-used.
 		//So no DATA RACE ;)
-		t := &twitter.Twitter{
+		/*t := &twitter.Twitter{
 			Client: http.DefaultClient,
-		}
+		}*/
 		g := &github.GitHub{
 			Client: http.DefaultClient,
 		}
-		checkers = append(checkers, t, g)
+		checkers = append(checkers, g)
 	}
 	results := make(chan Result)
 	/*ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
