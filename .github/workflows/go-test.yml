@@ -55,7 +55,7 @@ jobs:
         with:
           path: new
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
       - name: Install benchstat
