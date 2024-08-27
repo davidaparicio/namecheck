@@ -1,6 +1,6 @@
-// Package instagram provides primitives to check if an username
-// is available on Instagram.
-package instagram
+// Package tinder provides primitives to check if an username
+// is available on Tinder.
+package tinder
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ import (
 	"github.com/davidaparicio/namecheck/internal"
 )
 
-type Instagram struct {
+type Tinder struct {
 	Client namecheck.Client
 }
 
@@ -27,31 +27,31 @@ const (
 
 var legalPattern = regexp.MustCompile("^[-0-9A-Za-z]*$")
 
-func (*Instagram) String() string {
-	return "Instagram"
+func (*Tinder) String() string {
+	return "Tinder"
 }
 
-func (*Instagram) IsValid(username string) bool {
+func (*Tinder) IsValid(username string) bool {
 	return internal.IsLongEnough(username, minLen) &&
 		internal.IsShortEnough(username, maxLen)
 }
 
-func (insta *Instagram) IsAvailable(ctx context.Context, username string) (bool, error) {
-	endpoint := fmt.Sprintf("https://www.instagram.com/%s/?locale=en_US", url.PathEscape(username))
+func (tin *Tinder) IsAvailable(ctx context.Context, username string) (bool, error) {
+	endpoint := fmt.Sprintf("https://tinder.com/@marta3%s", url.PathEscape(username))
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		err := namecheck.UnknownAvailabilityError{
 			Username: username,
-			Platform: insta.String(),
+			Platform: tin.String(),
 			Cause:    err,
 		}
 		return false, &err
 	}
-	resp, err := insta.Client.Do(req)
+	resp, err := tin.Client.Do(req)
 	if err != nil {
 		err := namecheck.UnknownAvailabilityError{
 			Username: username,
-			Platform: insta.String(),
+			Platform: tin.String(),
 			Cause:    err,
 		}
 		return false, &err
@@ -66,7 +66,7 @@ func (insta *Instagram) IsAvailable(ctx context.Context, username string) (bool,
 	if resp.StatusCode != http.StatusOK {
 		err := namecheck.UnknownAvailabilityError{
 			Username: username,
-			Platform: insta.String(),
+			Platform: tin.String(),
 			Cause:    err,
 		}
 		return false, &err
@@ -82,10 +82,7 @@ func (insta *Instagram) IsAvailable(ctx context.Context, username string) (bool,
 	}
 	bodyString := string(bodyBytes)
 
-	//fmt.Println(bodyString)
-	//strings.Contains(bodyString, "Sorry, this page isn't available."))
-
-	/* if !noimageindex  = pseudo AVAILABLE (True)
-	   else noimageindex = NOT AVAILABLE (False) */
-	return !strings.Contains(bodyString, "noarchive, noimageindex"), nil
+	/* if Log in to like me  = pseudo NOT AVAILABLE (True)
+	   else = AVAILABLE (False) */
+	return !strings.Contains(bodyString, "</path></svg>Log in to like me</div>"), nil
 }

@@ -16,6 +16,7 @@ import (
 
 	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
+	"github.com/davidaparicio/namecheck/tinder"
 	"github.com/gorilla/mux"
 )
 
@@ -119,13 +120,16 @@ func handleCheck(w http.ResponseWriter, r *http.Request) {
 		i := &instagram.Instagram{
 			Client: http.DefaultClient,
 		}*/
-		g := &github.GitHub{
+		git := &github.GitHub{
+			Client: http.DefaultClient,
+		}
+		tin := &tinder.Tinder{
 			Client: http.DefaultClient,
 		}
 		/*f := &falser.Falser{}
 		t := &truer.Truer{}
 		checkers = append(checkers, g, i, f, t)*/
-		checkers = append(checkers, g)
+		checkers = append(checkers, git, tin)
 	}
 	results := make(chan Result)
 	/*ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
