@@ -45,6 +45,7 @@ var (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/check", handleCheck)
+	r.HandleFunc("/stats", handleStats)
 	r.HandleFunc("/visits", handleVisits)
 	r.HandleFunc("/details", handleDetails)
 	http.Handle("/", r)
@@ -63,6 +64,12 @@ func main() {
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func handleStats(w http.ResponseWriter, _ *http.Request) {
+	mu.Lock()
+	fmt.Fprint(w, m)
+	mu.Unlock()
 }
 
 func handleDetails(w http.ResponseWriter, r *http.Request) {
