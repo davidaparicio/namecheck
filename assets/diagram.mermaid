@@ -1,0 +1,109 @@
+flowchart TD
+    %% Interaction Layer
+    subgraph "User Interactions"
+        User["User"]:::interaction
+        HTTPClient["HTTP Client"]:::interaction
+    end
+
+    %% CLI Path
+    subgraph "CLI Execution"
+        CLI["CLI Component"]:::interaction
+    end
+
+    %% Server Path
+    subgraph "Server Execution"
+        Server["HTTP Server"]:::interaction
+        Router["Router (gorilla/mux)"]:::interaction
+        APIDoc["API Documentation (Swagger)"]:::interaction
+    end
+
+    %% Core Modules Layer
+    subgraph "Core Processing"
+        InternalLogic["Internal Logic"]:::core
+        FalserUtil["Falser Utility"]:::core
+        TruerUtil["Truer Utility"]:::core
+    end
+
+    %% Service Checkers Cluster
+    subgraph "Service Checkers"
+        GitHubChecker["GitHub Checker"]:::service
+        TwitterChecker["Twitter Checker"]:::service
+        InstagramChecker["Instagram Checker"]:::service
+        TinderChecker["Tinder Checker"]:::service
+    end
+
+    %% External APIs
+    subgraph "External APIs"
+        GitHubAPI["GitHub API"]:::external
+        TwitterAPI["Twitter API"]:::external
+        InstagramAPI["Instagram API"]:::external
+        TinderAPI["Tinder API"]:::external
+    end
+
+    %% CI/CD Pipeline
+    subgraph "CI/CD Pipeline"
+        Workflows["Workflows"]:::cicd
+        Docker["Docker"]:::cicd
+        Goreleaser["Goreleaser"]:::cicd
+        GoreleaserServer["Goreleaser Server"]:::cicd
+    end
+
+    %% Relationships for Interaction Layer
+    User -->|"triggers"| CLI
+    HTTPClient -->|"sends request"| Server
+
+    %% Server path internal flow
+    Server -->|"routes via"| Router
+    Router -->|"forwards to"| InternalLogic
+    APIDoc ---|"defines"| Server
+
+    %% CLI path flow
+    CLI -->|"invokes"| InternalLogic
+
+    %% Internal logic dependencies
+    InternalLogic -->|"utilizes"| FalserUtil
+    InternalLogic -->|"utilizes"| TruerUtil
+
+    %% Core to Service Checkers
+    InternalLogic -->|"calls"| GitHubChecker
+    InternalLogic -->|"calls"| TwitterChecker
+    InternalLogic -->|"calls"| InstagramChecker
+    InternalLogic -->|"calls"| TinderChecker
+
+    %% Service Checkers to External APIs
+    GitHubChecker -->|"queries"| GitHubAPI
+    TwitterChecker -->|"queries"| TwitterAPI
+    InstagramChecker -->|"queries"| InstagramAPI
+    TinderChecker -->|"queries"| TinderAPI
+
+    %% CI/CD Pipeline supports development
+    Workflows ---|"automates"| CLI
+    Workflows ---|"automates"| Server
+    Docker ---|"builds"| CLI
+    Docker ---|"builds"| Server
+    Goreleaser ---|"packages"| CLI
+    Goreleaser ---|"packages"| Server
+    GoreleaserServer ---|"packages"| Server
+
+    %% Click Events
+    click CLI "https://github.com/davidaparicio/namecheck/blob/main/cmd/cli/main.go"
+    click Server "https://github.com/davidaparicio/namecheck/blob/main/cmd/server/main.go"
+    click APIDoc "https://github.com/davidaparicio/namecheck/blob/main/api/swagger.yaml"
+    click GitHubChecker "https://github.com/davidaparicio/namecheck/blob/main/github/github.go"
+    click TwitterChecker "https://github.com/davidaparicio/namecheck/blob/main/twitter/twitter.go"
+    click InstagramChecker "https://github.com/davidaparicio/namecheck/blob/main/instagram/instagram.go"
+    click TinderChecker "https://github.com/davidaparicio/namecheck/blob/main/tinder/tinder.go"
+    click FalserUtil "https://github.com/davidaparicio/namecheck/blob/main/falser/falser.go"
+    click TruerUtil "https://github.com/davidaparicio/namecheck/blob/main/truer/truer.go"
+    click InternalLogic "https://github.com/davidaparicio/namecheck/blob/main/internal/internal.go"
+    click Workflows "https://github.com/davidaparicio/namecheck/tree/main/.github/workflows/"
+    click Docker "https://github.com/davidaparicio/namecheck/tree/main/Dockerfile"
+    click Goreleaser "https://github.com/davidaparicio/namecheck/blob/main/.goreleaser.yaml"
+    click GoreleaserServer "https://github.com/davidaparicio/namecheck/blob/main/.goreleaser_server.yaml"
+
+    %% Styles
+    classDef interaction fill:#cce5ff,stroke:#007bff,stroke-width:2px;
+    classDef core fill:#d4edda,stroke:#155724,stroke-width:2px;
+    classDef service fill:#fff3cd,stroke:#856404,stroke-width:2px;
+    classDef external fill:#f8d7da,stroke:#721c24,stroke-width:2px;
+    classDef cicd fill:#d1ecf1,stroke:#0c5460,stroke-width:2px;

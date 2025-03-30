@@ -23,6 +23,10 @@
 ## Overview
 A simple CLI and server to check a name availability on Twitter and GitHub.
 
+<img src="assets/img/name_diagram.jpg" alt="Namecheck diagram" title="Namecheck diagram" />
+
+Source: https://gitdiagram.com/davidaparicio/namecheck
+
 ## How to use it
 
 If you have already ```Docker``` installed on your laptop
