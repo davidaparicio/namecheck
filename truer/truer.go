@@ -3,13 +3,9 @@ package truer
 
 import (
 	"context"
-
-	"github.com/davidaparicio/namecheck"
 )
 
-type Truer struct {
-	Client namecheck.Client
-}
+type Truer struct{}
 
 func (*Truer) IsValid(username string) bool {
 	return true

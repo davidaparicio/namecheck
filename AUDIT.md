@@ -2,6 +2,14 @@
 
 Audit date: 2026-07-09 · Commit audited: `29e50fe` · Toolchain used: Go 1.24.7, golangci-lint v2.5.0
 
+> **Status: all findings below have been fixed on this branch** (see the commits following the
+> audit). Two caveats: the Instagram/Tinder scraping heuristics (§3.4) are inherently brittle —
+> they are now covered by deterministic stub-based tests, but only replacing scraping with real
+> APIs would fully resolve them; and §2.4 is addressed with a per-IP token-bucket rate limiter
+> (10 req/s, burst 20). `/stats` and `/details` (§2.2) are now disabled unless
+> `NAMECHECK_STATS_TOKEN` is set and presented as a bearer token. The dead `twitter` package
+> (§3.5) was deleted rather than restored; git history keeps it.
+
 ## Verdict at a glance
 
 The project builds cleanly, `go vet` is silent, all tests pass (including with `-race`), and the

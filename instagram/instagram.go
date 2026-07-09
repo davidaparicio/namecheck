@@ -3,7 +3,6 @@
 package instagram
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -25,7 +24,8 @@ const (
 	maxLen = 30
 )
 
-var legalPattern = regexp.MustCompile("^[-0-9A-Za-z]*$")
+// Instagram usernames may contain letters, digits, periods and underscores.
+var legalPattern = regexp.MustCompile("^[0-9A-Za-z._]*$")
 
 func (*Instagram) String() string {
 	return "Instagram"
@@ -33,7 +33,8 @@ func (*Instagram) String() string {
 
 func (*Instagram) IsValid(username string) bool {
 	return internal.IsLongEnough(username, minLen) &&
-		internal.IsShortEnough(username, maxLen)
+		internal.IsShortEnough(username, maxLen) &&
+		containsOnlyLegalChars(username)
 }
 
 func (insta *Instagram) IsAvailable(ctx context.Context, username string) (bool, error) {
@@ -58,34 +59,34 @@ func (insta *Instagram) IsAvailable(ctx context.Context, username string) (bool,
 	}
 
 	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			fmt.Printf("Error closing file: %s\n", err)
-		}
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
 		err := namecheck.UnknownAvailabilityError{
 			Username: username,
 			Platform: insta.String(),
-			Cause:    err,
+			Cause:    fmt.Errorf("unexpected status code: %d", resp.StatusCode),
 		}
 		return false, &err
 	}
 
-	var buf bytes.Buffer
-	tee := io.TeeReader(resp.Body, &buf)
-
-	// Safely read the response body
-	bodyBytes, err := io.ReadAll(tee)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, fmt.Errorf("error reading response body: %v", err)
+		err := namecheck.UnknownAvailabilityError{
+			Username: username,
+			Platform: insta.String(),
+			Cause:    fmt.Errorf("error reading response body: %w", err),
+		}
+		return false, &err
 	}
 	bodyString := string(bodyBytes)
-
-	//fmt.Println(bodyString)
-	//strings.Contains(bodyString, "Sorry, this page isn't available."))
 
 	/* if !noimageindex  = pseudo AVAILABLE (True)
 	   else noimageindex = NOT AVAILABLE (False) */
 	return !strings.Contains(bodyString, "noarchive, noimageindex"), nil
+}
+
+func containsOnlyLegalChars(username string) bool {
+	return legalPattern.MatchString(username)
 }

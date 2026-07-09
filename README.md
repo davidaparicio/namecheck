@@ -16,12 +16,12 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_namecheck&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=davidaparicio_namecheck)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/namecheck/blob/main/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fnamecheck?ref=badge_shield)
-[![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)]()
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
 
 
 ## Overview
-A simple CLI and server to check a name availability on Twitter and GitHub.
+A simple CLI and server to check a name availability on platforms such as GitHub, Instagram and Tinder.
 
 <img src="assets/img/name_diagram.jpg" alt="Namecheck diagram" title="Namecheck diagram" />
 
@@ -46,9 +46,9 @@ and check with a curl command ```curl http://localhost:8080/check?username=<PSEU
 For more information, you can see [examples here](EXAMPLES.md)
 
 
-## Remarks
-Twitter checker is using a GCP Cloud Function, adding a network latency simulation, configurable through a parameter.
+The server also exposes `/visits` (public), and `/stats` + `/details` which report every username ever queried. The latter two are disabled unless the `NAMECHECK_STATS_TOKEN` environment variable is set, and then require an `Authorization: Bearer <token>` header.
 
+## Remarks
 Server handles timeouts as recommended [Filippo Valsorda](https://github.com/FiloSottile) on the Cloudflare blog ([post 1 ](https://blog.cloudflare.com/the-complete-guide-to-golang-net-http-timeouts/)/[ post 2](https://blog.cloudflare.com/exposing-go-on-the-internet/)) and [Ilija Eftimov](https://ieftimov.com/posts/make-resilient-golang-net-http-servers-using-timeouts-deadlines-context-cancellation/).
 
 [ADR](https://github.blog/2020-08-13-why-write-adrs/) (Architecture decision record) about the usage of `gorilla/mux` can be found [here](https://www.alexedwards.net/blog/which-go-router-should-i-use).
