@@ -6,14 +6,12 @@ Reported vulnerabilities can be found on [cve.mitre.org](https://cve.mitre.org/c
 
 Each version is supported until the next one is released (e.g. 1.1.x will be supported until 1.2.0 is out).
 
-We use [Semantic Versioning](https://semver.org/).
+We use [Semantic Versioning](https://semver.org/). Only the latest release receives security fixes.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| Version        | Supported          |
+| -------------- | ------------------ |
+| latest release | :white_check_mark: |
+| older releases | :x:                |
 
 If you need a GUI to see Namecheck dependencies, you can check [deps.dev](https://deps.dev/go/github.com%2Fdavidaparicio%2Fnamecheck/)
 

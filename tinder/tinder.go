@@ -3,7 +3,6 @@
 package tinder
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -33,11 +32,12 @@ func (*Tinder) String() string {
 
 func (*Tinder) IsValid(username string) bool {
 	return internal.IsLongEnough(username, minLen) &&
-		internal.IsShortEnough(username, maxLen)
+		internal.IsShortEnough(username, maxLen) &&
+		containsOnlyLegalChars(username)
 }
 
 func (tin *Tinder) IsAvailable(ctx context.Context, username string) (bool, error) {
-	endpoint := fmt.Sprintf("https://tinder.com/@marta3%s", url.PathEscape(username))
+	endpoint := fmt.Sprintf("https://tinder.com/@%s", url.PathEscape(username))
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		err := namecheck.UnknownAvailabilityError{
@@ -58,31 +58,34 @@ func (tin *Tinder) IsAvailable(ctx context.Context, username string) (bool, erro
 	}
 
 	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			fmt.Printf("Error closing file: %s\n", err)
-		}
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
 		err := namecheck.UnknownAvailabilityError{
 			Username: username,
 			Platform: tin.String(),
-			Cause:    err,
+			Cause:    fmt.Errorf("unexpected status code: %d", resp.StatusCode),
 		}
 		return false, &err
 	}
 
-	var buf bytes.Buffer
-	tee := io.TeeReader(resp.Body, &buf)
-
-	// Safely read the response body
-	bodyBytes, err := io.ReadAll(tee)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return false, fmt.Errorf("error reading response body: %v", err)
+		err := namecheck.UnknownAvailabilityError{
+			Username: username,
+			Platform: tin.String(),
+			Cause:    fmt.Errorf("error reading response body: %w", err),
+		}
+		return false, &err
 	}
 	bodyString := string(bodyBytes)
 
 	/* if Log in to like me  = pseudo NOT AVAILABLE (True)
 	   else = AVAILABLE (False) */
 	return !strings.Contains(bodyString, "</path></svg>Log in to like me</div>"), nil
+}
+
+func containsOnlyLegalChars(username string) bool {
+	return legalPattern.MatchString(username)
 }

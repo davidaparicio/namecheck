@@ -30,7 +30,10 @@ func TestUsernameAvailable(t *testing.T) {
 	username := "test"
 	want := true
 	got, err := truer.IsAvailable(context.Background(), username)
-	if got != want && err == nil {
+	if err != nil {
+		t.Fatalf("IsAvailable(%s): unexpected error: %v", username, err)
+	}
+	if got != want {
 		t.Errorf(
 			"IsAvailable(%s) = %t; want %t",
 			username,

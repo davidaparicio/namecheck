@@ -2,25 +2,27 @@ package main
 
 import (
 	"context"
+	"crypto/subtle"
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"os"
+	"sync"
+	"sync/atomic"
 	"time"
+	"unicode/utf8"
 
 	//Be careful!!! http://mmcloughlin.com/posts/your-pprof-is-showing
 	//_ "net/http/pprof"
-
-	"sync"
-	"sync/atomic"
 
 	"github.com/davidaparicio/namecheck"
 	"github.com/davidaparicio/namecheck/github"
 	"github.com/davidaparicio/namecheck/tinder"
 	"github.com/gorilla/mux"
+	"golang.org/x/time/rate"
 )
-
-//type Status int
 
 type Result struct {
 	Username  string
@@ -30,34 +32,61 @@ type Result struct {
 	Error     error
 }
 
-/*const (
-	Unknown Status = iota
-	Active
-	Suspended
-	Available
-)*/
-
-var (
-	visits uint64
-	m      = make(map[string]uint)
-	mu     sync.Mutex
+const (
+	// maxOutstanding bounds the number of concurrent availability checks.
+	maxOutstanding = 16
+	// maxUsernameLen is the longest username any supported platform allows.
+	maxUsernameLen = 39
+	// maxTrackedNames caps the size of the per-username visit map so that
+	// attacker-chosen usernames cannot grow it without bound.
+	maxTrackedNames = 10_000
+	// outboundTimeout bounds each availability check against a third party.
+	outboundTimeout = 10 * time.Second
 )
 
+type server struct {
+	checkers []namecheck.Checker
+
+	visits atomic.Uint64
+
+	mu     sync.Mutex
+	counts map[string]uint
+
+	// statsToken guards /stats and /details, which expose every username
+	// ever queried. If empty, those endpoints are disabled.
+	statsToken string
+}
+
 func main() {
+	// Clients and Transports are safe for concurrent use by multiple
+	// goroutines, and for efficiency should only be created once and reused.
+	client := &http.Client{Timeout: outboundTimeout}
+	s := &server{
+		checkers: []namecheck.Checker{
+			&github.GitHub{Client: client},
+			&tinder.Tinder{Client: client},
+		},
+		counts:     make(map[string]uint),
+		statsToken: os.Getenv("NAMECHECK_STATS_TOKEN"),
+	}
+
 	r := mux.NewRouter()
-	r.HandleFunc("/check", handleCheck)
-	r.HandleFunc("/stats", handleStats)
-	r.HandleFunc("/visits", handleVisits)
-	r.HandleFunc("/details", handleDetails)
-	http.Handle("/", r)
+	r.HandleFunc("/check", s.handleCheck)
+	r.HandleFunc("/stats", s.handleStats)
+	r.HandleFunc("/visits", s.handleVisits)
+	r.HandleFunc("/details", s.handleDetails)
+
+	limiter := newIPRateLimiter(rate.Limit(10), 20)
 
 	srv := &http.Server{
-		Addr:              ":8080",
-		ReadTimeout:       1 * time.Second,
-		WriteTimeout:      1 * time.Second,
+		Addr:        ":8080",
+		ReadTimeout: 5 * time.Second,
+		// WriteTimeout must exceed outboundTimeout: /check only starts
+		// writing once the upstream availability checks have finished.
+		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       30 * time.Second,
 		ReadHeaderTimeout: 2 * time.Second,
-		Handler:           r,
+		Handler:           limiter.middleware(r),
 		//TLSConfig:       tlsConfig,
 	}
 
@@ -67,91 +96,104 @@ func main() {
 	}
 }
 
-func handleStats(w http.ResponseWriter, _ *http.Request) {
-	mu.Lock()
-	fmt.Fprint(w, m)
-	mu.Unlock()
+// authorize allows access to sensitive endpoints only when a stats token is
+// configured and the caller presents it as a bearer token.
+func (s *server) authorize(w http.ResponseWriter, r *http.Request) bool {
+	if s.statsToken == "" {
+		http.Error(w, "stats endpoints are disabled (set NAMECHECK_STATS_TOKEN to enable)", http.StatusForbidden)
+		return false
+	}
+	want := "Bearer " + s.statsToken
+	got := r.Header.Get("Authorization")
+	if subtle.ConstantTimeCompare([]byte(got), []byte(want)) != 1 {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return false
+	}
+	return true
 }
 
-func handleDetails(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleStats(w http.ResponseWriter, r *http.Request) {
+	if !s.authorize(w, r) {
+		return
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, err := fmt.Fprint(w, s.counts); err != nil {
+		log.Printf("writing stats response: %v", err)
+	}
+}
+
+func (s *server) handleDetails(w http.ResponseWriter, r *http.Request) {
+	if !s.authorize(w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	dec := json.NewEncoder(w)
-	mu.Lock()
-	defer mu.Unlock()
-	if err := dec.Encode(m); err != nil {
+	enc := json.NewEncoder(w)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := enc.Encode(s.counts); err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 }
 
-func handleVisits(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleVisits(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	entity := struct {
 		Count uint64 `json:"visits"`
 	}{
-		Count: atomic.LoadUint64(&visits),
+		Count: s.visits.Load(),
 	}
-	dec := json.NewEncoder(w)
-	if err := dec.Encode(entity); err != nil {
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(entity); err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 }
 
-func handleCheck(w http.ResponseWriter, r *http.Request) {
-	atomic.AddUint64(&visits, 1)
+func (s *server) handleCheck(w http.ResponseWriter, r *http.Request) {
+	s.visits.Add(1)
 	username := r.URL.Query().Get("username")
 	if username == "" {
 		http.Error(w, "'username' query param is required", http.StatusBadRequest)
 		return
 	}
-	mu.Lock()
-	m[username]++
-	mu.Unlock()
-	var checkers []namecheck.Checker
-	//for i := 0; i < 50; i++ {
-	for i := 0; i < 3; i++ {
-		//Clients and Transports are safe for concurrent use by multiple
-		//goroutines and for efficiency should only be created once and re-used.
-		//So no DATA RACE ;)
-		/*t := &twitter.Twitter{
-			Client: http.DefaultClient,
-		}
-		i := &instagram.Instagram{
-			Client: http.DefaultClient,
-		}*/
-		git := &github.GitHub{
-			Client: http.DefaultClient,
-		}
-		tin := &tinder.Tinder{
-			Client: http.DefaultClient,
-		}
-		/*f := &falser.Falser{}
-		t := &truer.Truer{}
-		checkers = append(checkers, g, i, f, t)*/
-		checkers = append(checkers, git, tin)
+	if utf8.RuneCountInString(username) > maxUsernameLen {
+		http.Error(w, "'username' query param is too long", http.StatusBadRequest)
+		return
 	}
+	s.mu.Lock()
+	// Only track new usernames while the map is below its cap; known
+	// usernames keep counting.
+	if _, seen := s.counts[username]; seen || len(s.counts) < maxTrackedNames {
+		s.counts[username]++
+	}
+	s.mu.Unlock()
+
 	results := make(chan Result)
-	/*ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()*/
 	var wg sync.WaitGroup
-	wg.Add(len(checkers))
-	const maxOutstanding = 16
 	sem := make(chan struct{}, maxOutstanding)
-	for _, checker := range checkers {
-		go check(r.Context(), checker, username, &wg, sem, results)
+	for _, checker := range s.checkers {
+		wg.Add(1)
+		go func(checker namecheck.Checker) {
+			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
+			results <- check(r.Context(), checker, username)
+		}(checker)
 	}
 	go func() {
 		wg.Wait()
 		close(results)
 	}()
+
 	w.Header().Set("Content-Type", "application/json")
 	type jsonResult struct {
 		Platform  string `json:"platform"`
 		Valid     string `json:"valid"`
 		Available string `json:"available"`
 	}
-	jsonResults := make([]jsonResult, 0, len(checkers))
+	jsonResults := make([]jsonResult, 0, len(s.checkers))
 	for result := range results {
 		res := jsonResult{
 			Platform:  result.Platform,
@@ -167,38 +209,24 @@ func handleCheck(w http.ResponseWriter, r *http.Request) {
 		Username: username,
 		Results:  jsonResults,
 	}
-	dec := json.NewEncoder(w)
-	if err := dec.Encode(entity); err != nil {
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(entity); err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 }
 
-func check(
-	ctx context.Context,
-	checker namecheck.Checker,
-	username string,
-	wg *sync.WaitGroup,
-	sem <-chan struct{},
-	results chan<- Result,
-) {
-	defer func() { <-sem }()
-	defer wg.Done()
+func check(ctx context.Context, checker namecheck.Checker, username string) Result {
 	res := Result{
 		Username: username,
 		Platform: checker.String(),
 	}
 	res.Valid = checker.IsValid(username)
 	if !res.Valid {
-		results <- res
-		return
+		return res
 	}
-	avail, err := checker.IsAvailable(ctx, username)
-	res.Available = avail
-	if err != nil {
-		res.Error = err
-	}
-	results <- res
+	res.Available, res.Error = checker.IsAvailable(ctx, username)
+	return res
 }
 
 func availabilityStatus(res Result) string {
@@ -206,4 +234,66 @@ func availabilityStatus(res Result) string {
 		return "unknown"
 	}
 	return fmt.Sprintf("%t", res.Available)
+}
+
+// ipRateLimiter applies a per-client-IP token-bucket rate limit.
+type ipRateLimiter struct {
+	mu       sync.Mutex
+	visitors map[string]*visitor
+	limit    rate.Limit
+	burst    int
+}
+
+type visitor struct {
+	limiter  *rate.Limiter
+	lastSeen time.Time
+}
+
+func newIPRateLimiter(limit rate.Limit, burst int) *ipRateLimiter {
+	rl := &ipRateLimiter{
+		visitors: make(map[string]*visitor),
+		limit:    limit,
+		burst:    burst,
+	}
+	go rl.cleanupLoop()
+	return rl
+}
+
+func (rl *ipRateLimiter) allow(ip string) bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+	v, ok := rl.visitors[ip]
+	if !ok {
+		v = &visitor{limiter: rate.NewLimiter(rl.limit, rl.burst)}
+		rl.visitors[ip] = v
+	}
+	v.lastSeen = time.Now()
+	return v.limiter.Allow()
+}
+
+func (rl *ipRateLimiter) cleanupLoop() {
+	const staleAfter = 3 * time.Minute
+	for range time.Tick(time.Minute) {
+		rl.mu.Lock()
+		for ip, v := range rl.visitors {
+			if time.Since(v.lastSeen) > staleAfter {
+				delete(rl.visitors, ip)
+			}
+		}
+		rl.mu.Unlock()
+	}
+}
+
+func (rl *ipRateLimiter) middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			ip = r.RemoteAddr
+		}
+		if !rl.allow(ip) {
+			http.Error(w, "too many requests", http.StatusTooManyRequests)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

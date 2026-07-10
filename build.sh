@@ -2,9 +2,9 @@
 
 # FOR DEV
 # Build Namecheck CLI
-#goreleaser build --single-target --snapshot -f .goreleaser.yaml --rm-dist
+#goreleaser build --single-target --snapshot -f .goreleaser.yaml --clean
 # Build Namecheck SERVER
-goreleaser build --single-target --snapshot -f .goreleaser_server.yaml --rm-dist
+goreleaser build --single-target --snapshot -f .goreleaser_server.yaml --clean
 
 # RUN Swagger UI
 #docker run -p 47101:8080 -e SWAGGER_JSON_URL=https://raw.githubusercontent.com/davidaparicio/namecheck/main/api/swagger.yaml swaggerapi/swagger-ui

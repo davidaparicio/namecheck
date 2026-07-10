@@ -3,13 +3,9 @@ package falser
 
 import (
 	"context"
-
-	"github.com/davidaparicio/namecheck"
 )
 
-type Falser struct {
-	Client namecheck.Client
-}
+type Falser struct{}
 
 func (*Falser) IsValid(username string) bool {
 	return false
