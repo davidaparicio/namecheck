@@ -21,7 +21,21 @@
 
 
 ## Overview
-A simple CLI and server to check a name availability on Twitter and GitHub.
+A simple CLI and server to check a name availability on several websites, like GitHub, GitLab, Reddit, Bluesky, Mastodon and Hacker News.
+
+### Supported websites
+
+| Website | How the check works |
+|---|---|
+| GitHub | `https://github.com/<username>` answers 404 when the username is available |
+| GitLab | public REST API `https://gitlab.com/api/v4/users?username=<username>` answers `[]` when the username is available |
+| Reddit | `https://www.reddit.com/user/<username>/about.json` answers 404 when the username is available |
+| Bluesky | public AT Protocol API `com.atproto.identity.resolveHandle` answers 400 when the handle `<username>.bsky.social` is available |
+| Mastodon | public REST API `https://mastodon.social/api/v1/accounts/lookup?acct=<username>` answers 404 when the username is available (on the `mastodon.social` instance) |
+| Hacker News | official Firebase API `https://hacker-news.firebaseio.com/v0/user/<username>.json` answers `null` when the username is available |
+| Tinder | profile page scraping (`https://tinder.com/@<username>`) |
+| Twitter | simulated through a GCP Cloud Function (see Remarks below) |
+| Instagram | profile page scraping (disabled by default) |
 
 <img src="assets/img/name_diagram.jpg" alt="Namecheck diagram" title="Namecheck diagram" />
 
