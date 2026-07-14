@@ -11,7 +11,12 @@ import (
 	"time"
 
 	"github.com/davidaparicio/namecheck"
+	"github.com/davidaparicio/namecheck/bluesky"
 	"github.com/davidaparicio/namecheck/github"
+	"github.com/davidaparicio/namecheck/gitlab"
+	"github.com/davidaparicio/namecheck/hackernews"
+	"github.com/davidaparicio/namecheck/mastodon"
+	"github.com/davidaparicio/namecheck/reddit"
 )
 
 //type Status int
@@ -36,21 +41,22 @@ func main() {
 	}
 	username := os.Args[1]
 
-	var checkers []namecheck.Checker
-	for i := 0; i < 3; i++ {
-		/*t := &twitter.Twitter{
-			Client: http.DefaultClient,
-		}*/
-		g := &github.GitHub{
-			Client: http.DefaultClient,
-		}
-		checkers = append(checkers, g)
+	/*t := &twitter.Twitter{
+		Client: http.DefaultClient,
+	}*/
+	checkers := []namecheck.Checker{
+		&github.GitHub{Client: http.DefaultClient},
+		&gitlab.GitLab{Client: http.DefaultClient},
+		&reddit.Reddit{Client: http.DefaultClient},
+		&bluesky.Bluesky{Client: http.DefaultClient},
+		&mastodon.Mastodon{Client: http.DefaultClient},
+		&hackernews.HackerNews{Client: http.DefaultClient},
 	}
 	results := make(chan Result, len(checkers))
 	errc := make(chan error, len(checkers))
 	var wg sync.WaitGroup
 	wg.Add(len(checkers))
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	for _, checker := range checkers {
 		go check(ctx, checker, username, &wg, results, errc)
@@ -60,7 +66,8 @@ func main() {
 		close(results)
 	}()
 
-	for {
+	// each checker sends exactly one message, either a result or an error
+	for i := 0; i < len(checkers); i++ {
 		select {
 		case err := <-errc:
 			//OLD
@@ -77,12 +84,8 @@ func main() {
 			if errors.As(err, &uae) {
 				fmt.Println(uae.Platform, uae.Username)
 			}
-			fmt.Println(err)
-			return
-		case res, ok := <-results:
-			if !ok {
-				return
-			}
+			fmt.Fprintln(os.Stderr, err)
+		case res := <-results:
 			fmt.Println(res)
 		}
 	}

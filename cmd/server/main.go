@@ -15,7 +15,12 @@ import (
 	"sync/atomic"
 
 	"github.com/davidaparicio/namecheck"
+	"github.com/davidaparicio/namecheck/bluesky"
 	"github.com/davidaparicio/namecheck/github"
+	"github.com/davidaparicio/namecheck/gitlab"
+	"github.com/davidaparicio/namecheck/hackernews"
+	"github.com/davidaparicio/namecheck/mastodon"
+	"github.com/davidaparicio/namecheck/reddit"
 	"github.com/davidaparicio/namecheck/tinder"
 	"github.com/gorilla/mux"
 )
@@ -108,28 +113,25 @@ func handleCheck(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	m[username]++
 	mu.Unlock()
-	var checkers []namecheck.Checker
-	//for i := 0; i < 50; i++ {
-	for i := 0; i < 3; i++ {
-		//Clients and Transports are safe for concurrent use by multiple
-		//goroutines and for efficiency should only be created once and re-used.
-		//So no DATA RACE ;)
-		/*t := &twitter.Twitter{
-			Client: http.DefaultClient,
-		}
-		i := &instagram.Instagram{
-			Client: http.DefaultClient,
-		}*/
-		git := &github.GitHub{
-			Client: http.DefaultClient,
-		}
-		tin := &tinder.Tinder{
-			Client: http.DefaultClient,
-		}
-		/*f := &falser.Falser{}
-		t := &truer.Truer{}
-		checkers = append(checkers, g, i, f, t)*/
-		checkers = append(checkers, git, tin)
+	//Clients and Transports are safe for concurrent use by multiple
+	//goroutines and for efficiency should only be created once and re-used.
+	//So no DATA RACE ;)
+	/*t := &twitter.Twitter{
+		Client: http.DefaultClient,
+	}
+	i := &instagram.Instagram{
+		Client: http.DefaultClient,
+	}
+	f := &falser.Falser{}
+	t := &truer.Truer{}*/
+	checkers := []namecheck.Checker{
+		&github.GitHub{Client: http.DefaultClient},
+		&gitlab.GitLab{Client: http.DefaultClient},
+		&reddit.Reddit{Client: http.DefaultClient},
+		&bluesky.Bluesky{Client: http.DefaultClient},
+		&mastodon.Mastodon{Client: http.DefaultClient},
+		&hackernews.HackerNews{Client: http.DefaultClient},
+		&tinder.Tinder{Client: http.DefaultClient},
 	}
 	results := make(chan Result)
 	/*ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -179,11 +181,12 @@ func check(
 	checker namecheck.Checker,
 	username string,
 	wg *sync.WaitGroup,
-	sem <-chan struct{},
+	sem chan struct{},
 	results chan<- Result,
 ) {
-	defer func() { <-sem }()
 	defer wg.Done()
+	sem <- struct{}{}
+	defer func() { <-sem }()
 	res := Result{
 		Username: username,
 		Platform: checker.String(),
